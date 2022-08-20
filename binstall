@@ -1,0 +1,338 @@
+#!/usr/bin/env ruby
+trap(:SIGINT) { puts; exit 130 }
+trap(:SIGPIPE, :SYSTEM_DEFAULT)
+require 'json'
+
+VERSION_REGEX = /\d+\.\d+\.\d+/
+
+class String
+    def colour(code)
+        "\e[%dm%s\e[0m" % [code, self]
+    end
+
+    # rubocop:disable Lint/ShadowingOuterLocalVariable
+    %w[black red green yellow blue magenta cyan white].each.with_index do |mode, code|
+        [[mode, code], ['light_' + mode, code + 60]].each do |mode, code|
+            define_method(mode) { colour(code + 30) }
+            define_method('on_' + mode) { colour(code + 40) }
+        end
+    end
+    # rubocop:enable Lint/ShadowingOuterLocalVariable
+
+    %w[_ bold _ italic underline blink _ swap hide].each.with_index do |mode, code|
+        define_method(mode) { colour(code) } if mode != '_'
+    end
+end
+
+class Installer; end # rubocop:disable Lint/EmptyClass
+
+class Jless < Installer
+    NAME = 'jless'
+    REPO = 'PaulJuliusMartinez/jless'
+
+    def install!
+        basename = "jless-v#{latest_version}-x86_64-unknown-linux-gnu.zip"
+        url = "https://github.com/#{REPO}/releases/download/v#{latest_version}/#{basename}"
+        extract_zip!(url)
+        chmod!
+    end
+end
+
+class Jc < Installer
+    NAME = 'jc'
+    REPO = 'kellyjonbrazil/jc'
+
+    def fetch_installed_version
+        `./#{NAME} -v`.lines.first[VERSION_REGEX]
+    end
+
+    def install!
+        basename = "jc-#{latest_version}-linux-x86_64.tar.gz"
+        url = "https://github.com/#{REPO}/releases/download/v#{latest_version}/#{basename}"
+        extract_tar_gz!(url)
+        chmod!
+    end
+end
+
+class Sd < Installer
+    NAME = 'sd'
+    REPO = 'chmln/sd'
+
+    def install!
+        basename = "sd-v#{latest_version}-x86_64-unknown-linux-gnu"
+        url = "https://github.com/#{REPO}/releases/download/v#{latest_version}/#{basename}"
+        download!(url)
+        chmod!
+    end
+end
+
+class Fzf < Installer
+    NAME = 'fzf'
+    REPO = 'junegunn/fzf'
+
+    def install!
+        basename = "fzf-#{latest_version}-linux_amd64"
+        url = "https://github.com/#{REPO}/releases/download/#{latest_version}/#{basename}.tar.gz"
+        extract_tar_gz!(url)
+        chmod!
+    end
+end
+
+class Ripgrep < Installer
+    NAME = 'rg'
+    REPO = 'BurntSushi/ripgrep'
+
+    def install!
+        basename = "ripgrep-#{latest_version}-x86_64-unknown-linux-musl"
+        url = "https://github.com/#{REPO}/releases/download/#{latest_version}/#{basename}.tar.gz"
+        extract_tar_gz!(url, basename)
+        chmod!
+    end
+end
+
+class Skim < Installer
+    NAME = 'sk'
+    REPO = 'lotabout/skim'
+
+    def install!
+        basename = "skim-v#{latest_version}-x86_64-unknown-linux-musl"
+        url = "https://github.com/lotabout/skim/releases/download/v#{latest_version}/#{basename}.tar.gz"
+        extract_tar_gz!(url)
+        chmod!
+    end
+end
+
+class Dua < Installer
+    NAME = 'dua'
+    REPO = 'Byron/dua-cli'
+
+    def install!
+        basename = "dua-v#{latest_version}-x86_64-unknown-linux-musl"
+        url = "https://github.com/#{REPO}/releases/download/v#{latest_version}/#{basename}.tar.gz"
+        extract_tar_gz!(url, basename)
+        chmod!
+    end
+end
+
+class Fselect < Installer
+    NAME = 'fselect'
+    REPO = 'jhspetersson/fselect'
+
+    def install!
+        url = "https://github.com/#{REPO}/releases/download/#{latest_version}/fselect-x86_64-linux-musl.gz"
+        extract_gz!(url)
+        chmod!
+    end
+end
+
+class Fd < Installer
+    NAME = 'fd'
+    REPO = 'sharkdp/fd'
+
+    def install!
+        basename = "fd-v#{latest_version}-x86_64-unknown-linux-gnu"
+        url = "https://github.com/#{REPO}/releases/download/v#{latest_version}/#{basename}.tar.gz"
+        extract_tar_gz!(url, basename)
+        chmod!
+    end
+end
+
+class Tokei < Installer
+    NAME = 'tokei'
+    REPO = 'XAMPPRocky/tokei'
+
+    def install!
+        url = "https://github.com/#{REPO}/releases/download/v#{latest_version}/tokei-x86_64-unknown-linux-gnu.tar.gz"
+        extract_tar_gz!(url)
+        chmod!
+    end
+end
+
+class Watchexec < Installer
+    NAME = 'watchexec'
+    REPO = 'watchexec/watchexec'
+
+    def install!
+        basename = "watchexec-#{latest_version}-x86_64-unknown-linux-musl"
+        url = "https://github.com/#{REPO}/releases/download/cli-v#{latest_version}/#{basename}.tar.xz"
+        extract_tar_xz!(url, basename)
+        chmod!
+    end
+end
+
+class Direnv < Installer
+    NAME = 'direnv'
+    REPO = 'direnv/direnv'
+
+    def fetch_installed_version
+        `./#{NAME} version`.chomp
+    end
+
+    def install!
+        url = "https://github.com/#{REPO}/releases/download/v#{latest_version}/direnv.linux-amd64"
+        download!(url)
+        chmod!
+    end
+end
+
+class Installer
+    INSTALLABLES = [
+        Direnv,
+        Dua,
+        Fd,
+        Fselect,
+        Fzf,
+        Jc,
+        Jless,
+        Ripgrep,
+        Sd,
+        Skim,
+        Tokei,
+        Watchexec,
+    ]
+
+    CURL = 'curl -sSL'
+
+    def latest_github_release(repo)
+        res = JSON.parse(`#{CURL} https://api.github.com/repos/#{repo}/releases`)
+
+        if res.is_a?(Hash) && res['message']
+            $stderr.puts res['message'].red
+            exit 1
+        end
+
+        return res.select do |release|
+            !release['draft'] && !release['prerelease'] && release['tag_name'] !~ /\bpre\b/
+        end.first
+    end
+
+    def fetch_installed_version
+        `./#{name} --version`.lines.first[VERSION_REGEX]
+    end
+
+    def fetch_latest_version
+        latest_github_release(self.class::REPO)['tag_name'][VERSION_REGEX]
+    end
+
+    def latest_version
+        @latest_version ||= fetch_latest_version
+    end
+
+    def installed_version
+        @installed_version ||= fetch_installed_version
+    end
+
+    def name
+        self.class::NAME
+    end
+
+    def run!(command)
+        if !system(command)
+            $stderr.puts 'Error running %s'.red % command
+            exit 1
+        end
+    end
+
+    def require_deps!(*names)
+        names.each do |name|
+            if !system('which %s 1>/dev/null 2>&1' % name)
+                $stderr.puts 'Dependency %s is required'.red % name
+                exit 1
+            end
+        end
+    end
+
+    def debug(fmt, *args)
+        if ENV['DEBUG']
+            $stderr.puts fmt.blue % args
+        end
+    end
+
+    def extract_tar_gz!(url, basename = nil)
+        require_deps!('curl', 'tar')
+
+        path = [basename, name].compact.join('/')
+        debug('Downloading %s => %s', url, path)
+        run!("#{CURL} #{url} | tar xzf - #{path} -O >| #{name}")
+    end
+
+    def extract_tar_xz!(url, basename = nil)
+        require_deps!('curl', 'tar')
+
+        path = [basename, name].compact.join('/')
+        debug('Downloading %s => %s', url, path)
+        run!("#{CURL} #{url} | tar xJf - #{path} -O >| #{name}")
+    end
+
+    def extract_gz!(url)
+        require_deps!('curl', 'gunzip')
+
+        debug('Downloading %s => %s', url, name)
+        run!("#{CURL} #{url} | gunzip -d >| #{name}")
+    end
+
+    def extract_zip!(url)
+        require_deps!('curl', 'funzip')
+
+        debug('Downloading %s => %s', url, name)
+        run!("#{CURL} #{url} | funzip >| #{name}")
+    end
+
+    def download!(url)
+        require_deps!('curl')
+
+        run!("#{CURL} #{url} >| #{name}")
+    end
+
+    def chmod!
+        require_deps!('chmod')
+
+        run!("chmod +x #{name}")
+    end
+
+    def self.run
+        INSTALLABLES.each do |installable|
+            installer = installable.new
+
+            # If the binary doesn't exist then install it and stop here as it won't be possible to
+            # get the installed version below.
+            if !File.exist?(installer.name)
+                puts '[%s] %s (%s)' % [
+                    'I'.yellow,
+                    installer.name,
+                    installer.latest_version,
+                ]
+                installer.install!
+                next
+            end
+
+            if installer.installed_version == installer.latest_version
+                puts '[%s] %s (%s)' % [
+                    '✔︎'.green,
+                    installer.name,
+                    installer.latest_version,
+                ]
+                next
+            else
+                puts '[%s] %s (%s -> %s)' % [
+                    'U'.yellow,
+                    installer.name,
+                    installer.installed_version,
+                    installer.latest_version,
+                ]
+            end
+
+            installer.install!
+        end
+    end
+end
+
+OPT_DIR = File.expand_path('~/opt')
+
+if !File.directory?(OPT_DIR)
+    puts 'This installer requires ~/opt to exist.'.red
+    exit 1
+end
+
+Dir.chdir(OPT_DIR)
+Installer.run
