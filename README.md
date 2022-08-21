@@ -4,7 +4,7 @@
 
 ## Usage
 
-Copy the script to the target server and run it. Binaries are installed to `$HOME/opt` so you may need to add that to `$PATH`.
+Copy the script to the target server and run it. Binaries are installed to `$HOME/opt` so you may need to add that to `PATH`.
 
 ## Default toolset
 
