@@ -154,7 +154,7 @@ class Watchexec < Installer
 
     def install!
         basename = "watchexec-#{latest_version}-x86_64-unknown-linux-musl"
-        url = "https://github.com/#{REPO}/releases/download/cli-v#{latest_version}/#{basename}.tar.xz"
+        url = "https://github.com/#{REPO}/releases/download/v#{latest_version}/#{basename}.tar.xz"
         extract_tar_xz!(url, basename)
         chmod!
     end
