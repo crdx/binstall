@@ -214,7 +214,11 @@ class Installer
         end
 
         return res.select do |release|
-            !release['draft'] && !release['prerelease'] && release['tag_name'] !~ /\bpre\b/
+            valid_tag = ['pre', 'alpha', 'beta'].none? { |term|
+                release['tag_name'] =~ /\b#{term}\b/
+            }
+
+            valid_tag && !release['draft'] && !release['prerelease']
         end.first
     end
 
