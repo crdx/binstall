@@ -175,6 +175,17 @@ class Direnv < Installer
     end
 end
 
+class Kitten < Installer
+    NAME = 'kitten'
+    REPO = 'kovidgoyal/kitty'
+
+    def install!
+        url = "https://github.com/#{REPO}/releases/download/v#{latest_version}/kitten-linux-amd64"
+        download!(url)
+        chmod!
+    end
+end
+
 class Installer
     INSTALLABLES = [
         Direnv,
@@ -189,6 +200,7 @@ class Installer
         Skim,
         Tokei,
         Watchexec,
+        Kitten,
     ]
 
     CURL = 'curl -sSL'

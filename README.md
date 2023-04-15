@@ -15,6 +15,7 @@ Copy the script to the target server and run it. Binaries are installed to `$HOM
 - fzf
 - jc
 - jless
+- kitten
 - ripgrep
 - sd
 - skim
