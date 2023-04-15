@@ -346,7 +346,7 @@ end
 OPT_DIR = File.expand_path('~/opt')
 
 if !File.directory?(OPT_DIR)
-    puts 'This installer requires ~/opt to exist.'.red
+    puts 'This installer requires ~/opt to exist'.red
     exit 1
 end
 
