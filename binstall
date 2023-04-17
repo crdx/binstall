@@ -214,7 +214,7 @@ class Installer
         end
 
         return res.select do |release|
-            valid_tag = ['pre', 'alpha', 'beta'].none? do |term|
+            valid_tag = %w[pre alpha beta].none? do |term|
                 release['tag_name'] =~ /\b#{term}\b/
             end
 
