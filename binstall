@@ -72,7 +72,7 @@ class Fzf < Installer
 
     def install!
         basename = "fzf-#{latest_version}-linux_amd64"
-        url = "https://github.com/#{REPO}/releases/download/#{latest_version}/#{basename}.tar.gz"
+        url = "https://github.com/#{REPO}/releases/download/v#{latest_version}/#{basename}.tar.gz"
         extract_tar_gz!(url)
         chmod!
     end
