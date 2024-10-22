@@ -202,6 +202,18 @@ class Kitten < Installer
     end
 end
 
+class Gum < Installer
+    NAME = 'gum'
+    REPO = 'charmbracelet/gum'
+
+    def install!
+        basename = "gum_#{latest_version}_Linux_x86_64"
+        url = "https://github.com/#{REPO}/releases/download/v#{latest_version}/#{basename}.tar.gz"
+        extract_tar_gz!(url, basename)
+        chmod!
+    end
+end
+
 class Xh < Installer
     NAME = 'xh'
     REPO = 'ducaale/xh'
@@ -231,6 +243,7 @@ class Installer
         Skim,
         Tokei,
         Watchexec,
+        Gum,
         Xh,
     ]
 
