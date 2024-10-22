@@ -21,6 +21,7 @@ Copy the script to the target server and run it. Binaries are installed to `$HOM
 - skim
 - tokei
 - watchexec
+- xh
 
 ## Extending
 

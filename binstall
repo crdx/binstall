@@ -186,6 +186,18 @@ class Kitten < Installer
     end
 end
 
+class Xh < Installer
+    NAME = 'xh'
+    REPO = 'ducaale/xh'
+
+    def install!
+        basename = "xh-v#{latest_version}-x86_64-unknown-linux-musl"
+        url = "https://github.com/#{REPO}/releases/download/v#{latest_version}/#{basename}.tar.gz"
+        extract_tar_gz!(url, basename)
+        chmod!
+    end
+end
+
 class Installer
     INSTALLABLES = [
         Direnv,
@@ -201,6 +213,7 @@ class Installer
         Tokei,
         Watchexec,
         Kitten,
+        Xh,
     ]
 
     CURL = 'curl -sSL'
