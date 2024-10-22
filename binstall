@@ -264,7 +264,7 @@ class Installer
 
     def require_deps!(*names)
         names.each do |name|
-            if !system('which %s 1>/dev/null 2>&1' % name)
+            if !system('which', name, out: File::NULL, err: File::NULL)
                 $stderr.puts 'Dependency %s is required'.red % name
                 exit 1
             end
