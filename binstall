@@ -207,12 +207,12 @@ class Installer
         Fzf,
         Jc,
         Jless,
+        Kitten,
         Ripgrep,
         Sd,
         Skim,
         Tokei,
         Watchexec,
-        Kitten,
         Xh,
     ]
 
