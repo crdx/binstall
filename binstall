@@ -54,6 +54,22 @@ class Jc < Installer
     end
 end
 
+class Bottom < Installer
+    NAME = 'btm'
+    REPO = 'ClementTsang/bottom'
+
+    def fetch_installed_version
+        `./#{NAME} -V`.lines.first[VERSION_REGEX]
+    end
+
+    def install!
+        basename = 'bottom_x86_64-unknown-linux-musl'
+        url = "https://github.com/#{REPO}/releases/download/#{latest_version}/#{basename}.tar.gz"
+        extract_tar_gz!(url)
+        chmod!
+    end
+end
+
 class Sd < Installer
     NAME = 'sd'
     REPO = 'chmln/sd'
@@ -201,6 +217,7 @@ end
 
 class Installer
     INSTALLABLES = [
+        Bottom,
         Direnv,
         Dua,
         Fd,
