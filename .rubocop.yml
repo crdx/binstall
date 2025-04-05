@@ -1,6 +1,7 @@
 AllCops:
   TargetRubyVersion: 3
   NewCops: enable
+  SuggestExtensions: false
   Exclude:
     # Overrides /home/*/.local/share/gem/ruby/*/gems/rubocop-*/config/default.yml
     - '.git/**/*'
