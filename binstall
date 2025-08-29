@@ -242,11 +242,13 @@ end
 class Installer
     INSTALLABLES = [
         Bottom,
+        Difftastic,
         Direnv,
         Dua,
         Fd,
         Fselect,
         Fzf,
+        Gum,
         Jc,
         Jless,
         Kitten,
@@ -255,9 +257,7 @@ class Installer
         Skim,
         Tokei,
         Watchexec,
-        Gum,
         Xh,
-        Difftastic,
     ]
 
     CURL = 'curl -sSL'
