@@ -8,11 +8,14 @@ Copy the script to the target server and run it. Binaries are installed to `$HOM
 
 ## Default toolset
 
+- bottom
+- difftastic
 - direnv
 - dua
 - fd
 - fselect
 - fzf
+- gum
 - jc
 - jless
 - kitten
