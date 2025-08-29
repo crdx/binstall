@@ -323,7 +323,8 @@ class Installer
 
     def create_symlink!(from, to)
         File.symlink(to, from)
-    rescue Errno::EEXIST # File already exists: nothing to do.
+    rescue Errno::EEXIST
+        # File already exists: nothing to do.
     end
 
     def extract_tar_gz!(url, basename = nil)
