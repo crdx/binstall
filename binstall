@@ -227,6 +227,18 @@ class Xh < Installer
     end
 end
 
+class Difftastic < Installer
+    NAME = 'difft'
+    REPO = 'Wilfred/difftastic'
+
+    def install!
+        basename = 'difft-x86_64-unknown-linux-musl'
+        url = "https://github.com/#{REPO}/releases/download/#{latest_version}/#{basename}.tar.gz"
+        extract_tar_gz!(url)
+        chmod!
+    end
+end
+
 class Installer
     INSTALLABLES = [
         Bottom,
@@ -245,6 +257,7 @@ class Installer
         Watchexec,
         Gum,
         Xh,
+        Difftastic,
     ]
 
     CURL = 'curl -sSL'
